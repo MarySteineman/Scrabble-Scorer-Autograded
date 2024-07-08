@@ -23,12 +23,11 @@ function oldScrabbleScorer(word) {
    for (let i = 0; i < word.length; i++) {
 
       for (const pointValue in oldPointStructure) {
-         console.log(`top: ${pointValue}`);
+
          if (oldPointStructure[pointValue].includes(word[i])) {
             letterPoints += `Points for '${word[i]}': ${pointValue}\n`
             pointNumbers.push(Number(pointValue));
             totalScore += pointNumbers[i]
-            console.log(pointValue);
          }
       }
    }
@@ -46,15 +45,7 @@ function initialPrompt() {
    return word;
 };
 
-let newPointStructure = {}; // curly brackets not included in code given, may need to change later
-// Redo the hardcoding so that can test out the stuff that comes before it (like transform maybe??  or, actually I think that the code around transform is working so that can add transform function in later on at the end)
-
-
-// console.log("Scrabble scoring values for");
-// console.log("letter a: ", newPointStructure.A);
-// console.log("letter j: ", newPointStructure.J);
-// console.log("letter z: ", newPointStructure["Z"]);
-
+let newPointStructure = transform(oldPointStructure);
 
 let simpleScorer = function (word) {
 
@@ -67,7 +58,7 @@ let simpleScorer = function (word) {
    }
    letterPoints = `Total Score for ${word} = ${totalScore}`;
    console.log(letterPoints);
-   return letterPoints;
+   return totalScore;
 };
 
 let vowelBonusScorer = function (word) {
@@ -89,10 +80,37 @@ let vowelBonusScorer = function (word) {
    }
    letterPoints = `Total Score for ${word} = ${totalScore}`;
    console.log(letterPoints);
-   return letterPoints;
+   return totalScore;
 };
 
-let scrabbleScorer;
+let scrabbleScorer = function (word) {
+
+   word = word.toLowerCase();
+   let letterPoints = "";
+   let pointNumbers = []
+   let totalScore = 0;
+
+
+   for (let i = 0; i < word.length; i++) {
+
+      for (const letter in newPointStructure) {
+
+         if (newPointStructure[letter].includes(word[i])) {
+            // PROBLEM: letter's type is a number (b/c it's the value held in the key), so can't compare it to word[i]'s letters
+            // QUESTION: How do you just access the key and not the value it holds?
+            // Just out of curiosity, why does this need to be an 'if' statement?  (Or if this doesn't, why is the original oldScrabbleScorer's setup with an 'if' statement?)
+
+            pointNumbers.push(Number(letter));  
+            // don't think need Number anymore b/c already turned newPointStructure's values to be numbers, not strings
+            totalScore += pointNumbers[i];
+         }
+      }
+   }
+
+   letterPoints = `Total Score for ${word} = ${totalScore}`;
+   console.log(letterPoints);
+   return totalScore;
+};
 
 const scoringAlgorithms = [
    {
@@ -108,7 +126,7 @@ const scoringAlgorithms = [
    {
       name: 'Scrabble',
       description: 'This uses the traditional scoring algorithm.',
-      scorerFunction: oldScrabbleScorer
+      scorerFunction: scrabbleScorer
    }
 ];
 
@@ -123,97 +141,28 @@ function scorerPrompt(word) {
       return vowelBonusScorer(word);
    } else if (whichScoringAlgorithm === '2') {
       console.log('\n\nScrabble:\n');
-      return oldScrabbleScorer(word);
+      return scrabbleScorer(word);
    }
 }
 
-// tasks that have to be done:
-// assign new key/value pairs (review Objects and Math section) 
-// assign these key/value pairs into newPointStructure by setting nps = transform function
-//  will loop thru each key in old pt structure and inside that loop, loop thru each index in that key
-console.log(`new: ${oldPointStructure[1][3]}`);
+
 function transform(oldPointStructure) {
-   // ***What we're supposed to do in this function: take info from oldPointStructure object (at the top) and put into a new object (newPointValues). Instead of being "score: letter, letter, letter" for each line, each line should be "one letter: score for that letter". AND, the letter needs to be lowercase.  
-   // // So, output should look like this:
-   // 'a': 1,
-   // 'b': 3, 
-   // 'c': 3,
-   // etc. for rest of alphabet
 
-   let newPointValues = {};
+   const newPointValues = {};
 
-   console.log(oldPointStructure[1][3])
-   //for (let i = 0; i < oldPointStructure[i]; i++) {
-   //newpointvalues=i
    for (const pointValue in oldPointStructure) {
-      // console.log(pointValue);
-      // console.log(oldPointStructure[pointValue][2]);
-      // console.log(oldPointStructure[i]);
-      console.log(typeof oldPointStructure);
-      console.log(`top: ${pointValue}`)
-      console.log(`top: ${oldPointStructure[pointValue][1]}`)
+
       for (let i = 0; i < oldPointStructure[pointValue].length; i++) {
-         // didn't work: let tempKey = oldPointStructure[pointValue][i];
-         //    // didn't work: oldPointStructure[j].toLowerCase; 
-         //oldPointStructure[pointValue][j]
-         console.log(`bottom one: ${pointValue}`)
-         console.log(`${newPointValues[oldPointStructure[pointValue][i]]}`.toLowerCase);
-         // ***line below is the body of the loop, didn't have console.log or template literals to start with. Was trying to turn object into string, to avoid the [object, Object] output in the terminal. Didn't seem to work: 
-         console.log(`newPointValues ${[oldPointStructure[pointValue][i]]} = ${pointValue}`);
-         // newPointValues[tempKey] = pointValue;
-         console.log(`bottomobject: ${newPointValues}`)
-         console.log(`bottom: ${oldPointStructure[pointValue][i]}`)
-         console.log(typeof `bottom: ${oldPointStructure[pointValue][i]}`)
+
+         newPointValues[oldPointStructure[pointValue][i].toLowerCase()] = parseInt(pointValue);
+
       }
+
    }
-   console.log(`outside of loops: ${newPointValues}`)
+   // console.log('New Point Values: ', newPointValues);
+   return newPointValues;
 }
-// **tried running code outside of function, and it worked:
-// let newPoints = {};
-// newPoints[oldPointStructure[2][1]] = 2;
-// newPoints[oldPointStructure[2][0]] = 2;
-// console.log(newPoints);
 
-
-
-
-// Old tries below:
-// newPointValues[oldPointStructure]
-
-// for (const pointValue in oldPointStructure) {
-//    console.log(`top: ${pointValue}`);
-// let upperCase = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-// for (const number in oldPointStructure) {
-
-//    for (let i = 0; i < oldPointStructure[number].length; i++) {
-
-//       lowerCase.push(oldPointStructure[number][i]);
-
-// Push to an array so that can use toLowerCase function, then put back in object to return
-// Currently putting all letters into one array, instead of iterating through one key only.  Trying to convert string of each key into an array so that can use toLowerCase on it.  Then convert back to Object. 
-// OR could leave as one array, turn to string, create a loop to make it lowercase, separate out into arrays, then put those arrays back into an object. 
-
-
-// Don't think I'm using anything directly below, but keeping for the moment, just in case.  
-// if (oldPointStructure[letter][i].includes(upperCase)) {
-//       lowerCase += oldPointStructure[number][i].toLowerCase();
-//       oldPointStructure[number] = lowerCase;
-//       console.log(oldPointStructure[number]); 
-//       console.log(lowerCase);
-//       console.log('inside', oldPointStructure[number]);
-//    }
-// }
-
-// for (let i = 0; i < lowerCase.length; i++) {
-//    lowerCase;
-
-// }
-// console.log(lowerCase);
-// console.log(oldPointStructure);
-// }
-// console.log(newPointValues);
-// return newPointValues;
-//}
 
 function runProgram() {
    // oldScrabbleScorer(word);
