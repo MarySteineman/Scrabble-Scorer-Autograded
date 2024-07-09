@@ -87,26 +87,13 @@ let scrabbleScorer = function (word) {
 
    word = word.toLowerCase();
    let letterPoints = "";
-   let pointNumbers = []
    let totalScore = 0;
-
 
    for (let i = 0; i < word.length; i++) {
 
-      for (const letter in newPointStructure) {
+      totalScore += newPointStructure[word[i]];
 
-         if (newPointStructure[letter].includes(word[i])) {
-            // PROBLEM: letter's type is a number (b/c it's the value held in the key), so can't compare it to word[i]'s letters
-            // QUESTION: How do you just access the key and not the value it holds?
-            // Just out of curiosity, why does this need to be an 'if' statement?  (Or if this doesn't, why is the original oldScrabbleScorer's setup with an 'if' statement?)
-
-            pointNumbers.push(Number(letter));  
-            // don't think need Number anymore b/c already turned newPointStructure's values to be numbers, not strings
-            totalScore += pointNumbers[i];
-         }
-      }
    }
-
    letterPoints = `Total Score for ${word} = ${totalScore}`;
    console.log(letterPoints);
    return totalScore;
