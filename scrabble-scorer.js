@@ -101,37 +101,28 @@ let scrabbleScorer = function (word) {
 
 const scoringAlgorithms = [
    {
-      name: 'Simple Score',
+      name: 'Simple Score:',
       description: 'Each letter is worth 1 point.',
       scorerFunction: simpleScorer
    },
    {
-      name: 'Bonus Vowels',
+      name: 'Bonus Vowels:',
       description: 'Vowels are 3 points, and consonants are 1 point.',
       scorerFunction: vowelBonusScorer
    },
    {
-      name: 'Scrabble',
+      name: 'Scrabble:',
       description: 'This uses the traditional scoring algorithm.',
       scorerFunction: scrabbleScorer
    }
 ];
 
 function scorerPrompt(word) {
+
    let whichScoringAlgorithm = input.question(`Which scoring algorithm would you like to use?:\n\tEnter '0' for ${scoringAlgorithms[0].name}: ${scoringAlgorithms[0].description}\n\tEnter '1' for ${scoringAlgorithms[1].name}: ${scoringAlgorithms[1].description}\n\tEnter '2' for ${scoringAlgorithms[2].name}: ${scoringAlgorithms[2].description}\n`);
-
-   if (whichScoringAlgorithm === '0') {
-      console.log('\n\nSimple Score:\n');
-      return simpleScorer(word);
-   } else if (whichScoringAlgorithm === '1') {
-      console.log('\n\nBonus Vowels:\n');
-      return vowelBonusScorer(word);
-   } else if (whichScoringAlgorithm === '2') {
-      console.log('\n\nScrabble:\n');
-      return scrabbleScorer(word);
-   }
+   console.log(scoringAlgorithms[whichScoringAlgorithm].name)
+   return scoringAlgorithms[whichScoringAlgorithm].scorerFunction(word);
 }
-
 
 function transform(oldPointStructure) {
 
@@ -149,7 +140,6 @@ function transform(oldPointStructure) {
    // console.log('New Point Values: ', newPointValues);
    return newPointValues;
 }
-
 
 function runProgram() {
    // oldScrabbleScorer(word);
